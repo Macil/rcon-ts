@@ -4,6 +4,7 @@
   "description": "A modern RCON client implementation written in TypeScript (targeting ES2015) and is async/await friendly.",
   "keywords": [
     "rcon",
+    "async-await",
     "typescript",
     "minecraft",
     "factorio",
