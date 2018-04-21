@@ -1,9 +1,10 @@
 {
   "name": "rcon-ts",
   "version": "1.0.0-beta",
-  "description": "A modern RCON client implementation written in ES2015",
+  "description": "A modern RCON client implementation written in TypeScript (targeting ES2015) and is async/await friendly.",
   "keywords": [
     "rcon",
+    "typescript",
     "minecraft",
     "factorio",
     "es2015",
@@ -11,7 +12,7 @@
   ],
   "typings":"rcon.ts",
   "main": "rcon.js",
-  "repository": "levrik/node-modern-rcon",
+  "repository": "electricessencde/rcon-ts",
   "contributors": [
     "Levin Ricket <me@levrik.io>",
     "electricessence"
