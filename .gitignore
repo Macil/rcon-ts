@@ -93,3 +93,7 @@ crashlytics-build.properties
 fabric.properties
 
 tests/.server/
+
+rcon.js
+rcon.d.ts
+rcon.js.map

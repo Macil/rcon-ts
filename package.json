@@ -1,16 +1,21 @@
 {
-  "name": "modern-rcon",
-  "version": "1.0.3",
+  "name": "rcon-ts",
+  "version": "1.0.0-beta",
   "description": "A modern RCON client implementation written in ES2015",
   "keywords": [
     "rcon",
     "minecraft",
+    "factorio",
     "es2015",
     "es6"
   ],
+  "typings":"rcon.ts",
   "main": "rcon.js",
   "repository": "levrik/node-modern-rcon",
-  "author": "Levin Ricket <me@levrik.io>",
+  "contributors": [
+    "Levin Ricket <me@levrik.io>",
+    "electricessence"
+  ],
   "license": "MIT",
   "scripts": {
     "setup-minecraft": "cd tests && rimraf .server && mkdirp .server && nugget https://s3.amazonaws.com/Minecraft.Download/versions/1.11.2/minecraft_server.1.11.2.jar -o .server/minecraft_server.jar && ncp fixtures/server.properties .server/server.properties && ncp fixtures/eula.txt .server/eula.txt",
@@ -18,14 +23,19 @@
     "test": "mocha --compilers js:async-to-gen/register tests/**/*.spec.js"
   },
   "devDependencies": {
+    "@types/node": "^9.6.6",
     "async-to-gen": "^1.3.0",
     "mkdirp": "^0.5.1",
     "mocha": "^3.2.0",
     "ncp": "^2.0.0",
     "nugget": "^2.0.1",
-    "rimraf": "^2.5.4"
+    "rimraf": "^2.5.4",
+    "typescript": "^2.8.3"
   },
   "engines": {
     "node": ">=6.0.0"
+  },
+  "dependencies": {
+    "tslib": "^1.9.0"
   }
 }

@@ -1,57 +1,68 @@
-node-modern-rcon [![npm package](https://img.shields.io/npm/v/modern-rcon.svg?style=flat-square)](https://www.npmjs.com/package/modern-rcon)
+rcon-ts
 ==============
-A modern RCON client implementation written in ES2015
+A modern RCON client implementation written in TypeScript (targeting ES2015) and is async/await friendly.
+
+(Originally `node-modern-rcon`.)
 
 **NOTE: This has only been tested with Minecraft. So be aware of possible bugs with other server implementations. Feel free to submit a PR if you have any problems.**
 
 ## Installation
 
 ```
-npm install modern-rcon --save
+npm install rcon-ts --save
 ```
 
 ## API
 
-#### `new Rcon(host, port = 25575, password, timeout = 5000)`
+#### Initialization
 
 Creates a new `Rcon` object.
 
-#### `rcon.connect()` -> `Promise`
+```typescript
+const rcon = new Rcon({
+    host: "host-path",
+    port: 25575 /*default*/, 
+    password: "required",
+    timeout: 5000 /*default (5 seconds)*/
+});
+````
+
+#### Connecting
 
 Connects with the credentials provided in the constructor.
+Can be awaited on.
+```typescript
+rcon.connect();
+```
 
-#### `rcon.send(data)` -> `Promise<string>`
+#### Sending
 
 Executes the provided command on the open connection and returns the response.
 
-#### `rcon.disconnect()` -> `Promise`
+```typescript
+let response = await rcon.send("[rcon request]");
+````
+#### Disconnecting
 
-Disconnects gracefully.
+Ends the current socket and subsequently signals to any pending request that the connection was disconnected.
+
+```typescript
+rcon.disconnect();
+````
 
 ## Example
 
-```javascript
-const Rcon = require('modern-rcon');
-
+```typescript
+import Rcon from 'rcon-ts';
 const rcon = new Rcon('localhost', 'some password');
 
-rcon.connect().then(() => {
-  return rcon.send('help'); // That's a command for Minecraft
-}).then(res => {
-  console.log(res);
-}).then(() => {
-  return rcon.disconnect();
-});
+async function sendHelp()
+{
+	rcon.connect();
+	// safe to immediately setup requests without waiting.
+	await rcon.send('help');
+	rcon.disconnect();
+}
+
+sendHelp();
 ```
-
-## Contribute
-
-1. Install the dependencies with `npm install`
-2. Setup a Minecraft Server for the tests by using `npm run setup-minecraft`  
-   **Important: This script will automatically accept the [Minecraft EULA](https://account.mojang.com/documents/minecraft_eula)**
-
-To run the tests you need to start the Minecraft Server with `npm run start-minecraft` in another Terminal.
-
-## License
-
-[MIT](LICENSE)
