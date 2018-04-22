@@ -85,7 +85,7 @@ export class Rcon implements RconConfig {
 		let p = _._connector;
 		if (!p) _._connector = p = new Promise<Rcon>((resolve, reject) => {
 			_._state = State.Connecting;
-			if (_.enableConsoleLogging) console.log(this.toString(), "... connecting ...");
+			if (_.enableConsoleLogging) console.log(this.toString(), "Connecting...");
 			const s = _._socket = net.createConnection(_.port, _.host);
 
 			function cleanup(message?:string, error?:Error):RconError | void {
@@ -107,7 +107,7 @@ export class Rcon implements RconConfig {
 			s.once('connect', () => {
 				s.removeAllListeners('error');
 				_._state = State.Connected;
-				if (_.enableConsoleLogging) console.log(_.toString(), "... connected, authorizing ...");
+				if (_.enableConsoleLogging) console.log(_.toString(), "Connected. Authorizing ...");
 
 				s.on('data', data => _._handleResponse(data));
 
@@ -118,7 +118,7 @@ export class Rcon implements RconConfig {
 
 				_.send(_.password, PacketType.AUTH).then(() => {
 					_._state = State.Authorized;
-					if (_.enableConsoleLogging) console.log(_.toString(), "... authorized");
+					if (_.enableConsoleLogging) console.log(_.toString(), "Authorized.");
 					resolve(_);
 				}).catch(error => {
 					_._state = State.Unauthorized;
@@ -127,7 +127,7 @@ export class Rcon implements RconConfig {
 			});
 
 			s.once('end', () => {
-				if (_.enableConsoleLogging) console.warn(this.toString(), "... disconnected");
+				if (_.enableConsoleLogging) console.warn(this.toString(), "Disconnected.");
 				_._state = State.Disconnected;
 				cleanup();
 			});
@@ -157,7 +157,7 @@ export class Rcon implements RconConfig {
 			if (callbacks.has(authId)) {
 				id = authId;
 				this._authPacketId = NaN;
-				callbacks.get(authId)!(null, new RconError('Authentication failed'));
+				callbacks.get(authId)!(null, new RconError('Authentication failed.'));
 			}
 		}
 		else if (callbacks.has(id)) {
@@ -219,7 +219,7 @@ export class Rcon implements RconConfig {
 
 			const onEnded = () => {
 				cleanup();
-				reject(new RconError('Disconnected before response'));
+				reject(new RconError('Disconnected before response.'));
 			};
 
 			s.once('end', onEnded);
