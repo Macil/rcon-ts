@@ -21,7 +21,7 @@ export const enum State {
 	Disconnected = 0,
 	Connecting = 0.5,
 	Connected = 1,
-	Authorized = 1.5,
+	Authorized = 2,
 	Refused = -1,
 	Unauthorized = -2
 }
