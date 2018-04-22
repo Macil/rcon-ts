@@ -1,6 +1,6 @@
 {
   "name": "rcon-ts",
-  "version": "1.0.2-beta",
+  "version": "1.0.3-beta",
   "description": "A modern RCON client implementation written in TypeScript (targeting ES2015) and is async/await friendly.",
   "keywords": [
     "rcon",
