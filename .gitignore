@@ -55,6 +55,7 @@ jspm_packages
 .idea/workspace.xml
 .idea/tasks.xml
 .idea/terminal.xml
+.idea/dictionaries
 
 # Sensitive or high-churn files:
 .idea/dataSources/
