@@ -50,7 +50,7 @@ Ends the current socket and subsequently signals to any pending request that the
 rcon.disconnect();
 ````
 
-## Example
+## Code Example
 
 ```typescript
 import Rcon from 'rcon-ts';
@@ -66,3 +66,11 @@ async function sendHelp()
 
 sendHelp();
 ```
+
+## Factorio Setup
+
+For usage or testing, make sure you are starting the game from command line.
+
+#### Example:
+`factorio.exe --start-server [save-name].zip --rcon-port [port] --rcon-password [password]`
+
