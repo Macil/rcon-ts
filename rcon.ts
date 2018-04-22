@@ -2,7 +2,7 @@ import * as net from 'net';
 import {Buffer} from 'buffer';
 
 class ExtendableError extends Error {
-	constructor(message: string = '') {
+	constructor(message: string = '', public readonly innerException?:Error) {
 		super(message);
 		this.message = message;
 		this.name = this.constructor.name;
@@ -11,8 +11,9 @@ class ExtendableError extends Error {
 }
 
 class RconError extends ExtendableError {
-	constructor(message: string) {
-		super(message);
+	constructor(message: string, innerException?:Error) {
+		super(message, innerException);
+		Object.freeze(this);
 	}
 }
 
@@ -21,7 +22,8 @@ export const enum State {
 	Connecting = 0.5,
 	Connected = 1,
 	Authorized = 1.5,
-	Rejected = -1
+	Refused = -1,
+	Unauthorized = -2
 }
 
 const enum PacketType {
@@ -44,6 +46,8 @@ export class Rcon implements RconConfig {
 	readonly port: number;
 	readonly password: string;
 	readonly timeout: number;
+
+	enableConsoleLogging: boolean = false;
 
 	private _authPacketId: number = NaN;
 	private _state: State = State.Disconnected;
@@ -81,32 +85,58 @@ export class Rcon implements RconConfig {
 		let p = _._connector;
 		if (!p) _._connector = p = new Promise<Rcon>((resolve, reject) => {
 			_._state = State.Connecting;
-			const s = net.createConnection(_.port, _.host);
+			if (_.enableConsoleLogging) console.log(this.toString(), "... connecting ...");
+			const s = _._socket = net.createConnection(_.port, _.host);
 
-			function cleanup() {
+			function cleanup(message?:string, error?:Error):RconError | void {
+				if(error) _._errors.push(error);
+				s.removeAllListeners();
 				if (_._socket == s) _._socket = undefined;
 				if (_._connector == p) _._connector = undefined;
+				if (_.enableConsoleLogging) console.error(_.toString(), message);
+				if(message) return new RconError(message, error);
 			}
 
-			s.on('connect', () => {
+			// Look for connection failure...
+			s.once('error', error => {
+				_._state = State.Refused;
+				reject(cleanup("Connection refused.", error)); // ** First point of failure.
+			});
+
+			// Look for successful connection...
+			s.once('connect', () => {
+				s.removeAllListeners('error');
 				_._state = State.Connected;
+				if (_.enableConsoleLogging) console.log(_.toString(), "... connected, authorizing ...");
+
+				s.on('data', data => _._handleResponse(data));
+
+				s.on('error', error => {
+					_._errors.push(error);
+					if (_.enableConsoleLogging) console.error(_.toString(), error);
+				});
+
 				_.send(_.password, PacketType.AUTH).then(() => {
 					_._state = State.Authorized;
-					return resolve(_);
-				}).catch(reason => {
-					_._state = State.Rejected;
-					cleanup();
-					reject(reason);
+					if (_.enableConsoleLogging) console.log(_.toString(), "... authorized");
+					resolve(_);
+				}).catch(error => {
+					_._state = State.Unauthorized;
+					reject(cleanup("Authorization failed.", error)); // ** Second point of failure.
 				});
 			});
-			s.on('data', data => _._handleResponse(data));
-			s.on('error', error => _._errors.push((error)));
-			s.on('end', () => {
+
+			s.once('end', () => {
+				if (_.enableConsoleLogging) console.warn(this.toString(), "... disconnected");
 				_._state = State.Disconnected;
 				cleanup();
 			});
 		});
 		return p;
+	}
+
+	toString(): string {
+		return `RCON: ${this.host}:${this.port}`;
 	}
 
 	disconnect(): void {
@@ -122,6 +152,7 @@ export class Rcon implements RconConfig {
 		const type = data.readInt32LE(8);
 		const callbacks = this._callbacks;
 		const authId = this._authPacketId;
+
 		if (id === -1 && !isNaN(authId) && type === PacketType.RESPONSE_AUTH) {
 			if (callbacks.has(authId)) {
 				id = authId;
@@ -144,10 +175,17 @@ export class Rcon implements RconConfig {
 
 	async send(data: string, cmd?: number): Promise<string> {
 		cmd = cmd || PacketType.COMMAND;
-		if (!this._connector)
+		if (!this._connector || this._state <= 0)
 			throw new RconError('Instance is not connected.');
 
-		await this._connector;
+		if(cmd==PacketType.AUTH)
+		{
+			if(this._state!=State.Connected)
+				throw new RconError('Authentication out of phase.');
+		} else {
+			await this._connector;
+		}
+
 		const s = this._socket;
 		if (!s || this._state <= 0)
 			throw new RconError('Instance was disconnected.');
@@ -179,7 +217,7 @@ export class Rcon implements RconConfig {
 				reject(new RconError('Request timed out'));
 			}, this.timeout);
 
-			const onEnded = ()=>{
+			const onEnded = () => {
 				cleanup();
 				reject(new RconError('Disconnected before response'));
 			};
