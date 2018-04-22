@@ -93,8 +93,12 @@ export class Rcon implements RconConfig {
 				s.removeAllListeners();
 				if (_._socket == s) _._socket = undefined;
 				if (_._connector == p) _._connector = undefined;
-				if (_.enableConsoleLogging) console.error(_.toString(), message);
-				if(message) return new RconError(message, error);
+				if(message)
+				{
+					if (_.enableConsoleLogging) console.error(_.toString(), message);
+					if(message) return new RconError(message, error);
+				}
+
 			}
 
 			// Look for connection failure...
@@ -141,7 +145,10 @@ export class Rcon implements RconConfig {
 
 	disconnect(): void {
 		const s = this._socket;
+		this._callbacks.clear();
 		if (s) s.end();
+		this._socket = undefined;
+		this._connector = undefined;
 	}
 
 	_handleResponse(data: Buffer): void {

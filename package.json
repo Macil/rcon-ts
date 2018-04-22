@@ -1,6 +1,6 @@
 {
   "name": "rcon-ts",
-  "version": "1.0.3-beta",
+  "version": "1.1.0",
   "description": "A modern RCON client implementation written in TypeScript (targeting ES2015) and is async/await friendly.",
   "keywords": [
     "rcon",
@@ -13,17 +13,12 @@
   ],
   "typings": "rcon.d.ts",
   "main": "rcon.js",
-  "repository": "electricessencde/rcon-ts",
+  "repository": "electricessence/rcon-ts",
   "contributors": [
     "Levin Ricket <me@levrik.io>",
     "electricessence"
   ],
   "license": "MIT",
-  "scripts": {
-    "setup-minecraft": "cd tests && rimraf .server && mkdirp .server && nugget https://s3.amazonaws.com/Minecraft.Download/versions/1.11.2/minecraft_server.1.11.2.jar -o .server/minecraft_server.jar && ncp fixtures/server.properties .server/server.properties && ncp fixtures/eula.txt .server/eula.txt",
-    "start-minecraft": "cd tests/.server && java -jar minecraft_server.jar nogui",
-    "test": "mocha --compilers js:async-to-gen/register tests/**/*.spec.js"
-  },
   "devDependencies": {
     "@types/node": "^9.6.6",
     "async-to-gen": "^1.3.0",
