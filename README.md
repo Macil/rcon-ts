@@ -90,7 +90,7 @@ sendHelp().finally(() =>
 });
 ```
 
-or
+Or simply...
 
 ```typescript
 rcon
