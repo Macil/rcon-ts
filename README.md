@@ -36,7 +36,7 @@ rcon.connect();
 
 ### Sending
 
-Executes the provided command on the open connection and returns the response.
+Executes the provided command on the active connection and returns the response.
 
 ```typescript
 let response = await rcon.send("[rcon request]");
