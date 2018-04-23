@@ -98,14 +98,14 @@ rcon
   .then(console.log, console.error);
 ```
 
-## Factorio
+### Factorio
 
-### Setup:
+#### Setup:
 
 For usage or testing, make sure you are starting the game from command line or connecting to an rcon configured remote instance.
 
 `factorio.exe --start-server [save-name].zip --rcon-port [port] --rcon-password [password]`
 
-### Verifying it's working:
+#### Verifying it's working:
 
 Try either one of [the examples above](#usage-examples).
