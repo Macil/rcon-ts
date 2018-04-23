@@ -4,8 +4,6 @@ A modern RCON client implementation written in TypeScript (targeting ES2015) and
 
 (Originally `node-modern-rcon`.)
 
-**NOTE: This has only been tested with Minecraft. So be aware of possible bugs with other server implementations. Feel free to submit a PR if you have any problems.**
-
 ## Installation
 
 ```
@@ -65,6 +63,20 @@ async function sendHelp()
 }
 
 sendHelp();
+```
+
+or
+
+```typescript
+import Rcon from 'rcon-ts';
+const rcon = new Rcon('localhost', 'some password');
+
+let result = rcon.session(async c=> {
+    return {
+        part1: await c.send('part1'),
+        part2: await c.send('part2')
+    }
+});
 ```
 
 ## Factorio Setup
