@@ -49,7 +49,30 @@ Ends the current socket and subsequently signals to any pending request that the
 rcon.disconnect();
 ````
 
-### Usage Examples
+### Sessions
+
+To simplify the usage, you can use the ```session``` method.
+
+```typescript
+// Single command:
+rcon
+  .session(c => c.send("one")) // connects, sends, and then disconnects.
+  .then(()=>console.log("first session complete"), console.error);
+  
+// Multiple commands:
+rcon
+  .session(async c => {
+    await c.send("two");
+    await c.send("three");
+  })
+  .then(()=>console.log("second session complete"), console.error);
+````
+
+Any number of conccurrent sessions can be active on a single connection and once they've all completed the connection will end.
+
+```session``` takes a promise factory as a parameter and passes the current Rcon instance as the first param (optional) to the factory.
+
+## Usage Examples
 
 ```typescript
 async function sendHelp()
