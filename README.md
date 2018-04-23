@@ -60,7 +60,8 @@ async function sendHelp()
   rcon.disconnect();
 }
 
-sendHelp().finally(()=>{
+sendHelp().finally(() =>
+{
   const errors = rcon.errors;
   if(errors.length) console.warn("Errors:",errors);
 });
@@ -70,10 +71,10 @@ or
 
 ```typescript
 rcon
-  .session(c=> c.send('/help'))
+  .session(c => c.send('/help'))
   .then(
-    result=> console.log(result),
-    error=>console.error(error));
+    result => console.log(result),
+    error => console.error(error));
 ```
 
 ## Factorio
