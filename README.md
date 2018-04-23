@@ -19,10 +19,10 @@ Creates a new `Rcon` object.
 ```typescript
 import Rcon from 'rcon-ts';
 const rcon = new Rcon({
-    host: "host-path",
-    port: 25575 /*default*/, 
-    password: "required",
-    timeout: 5000 /*default (5 seconds)*/
+  host: "host-path",
+  port: 25575 /*default*/, 
+  password: "required",
+  timeout: 5000 /*default (5 seconds)*/
 });
 ````
 
@@ -54,15 +54,15 @@ rcon.disconnect();
 ```typescript
 async function sendHelp()
 {
-	rcon.connect();
-	// safe to immediately setup requests without waiting.
-	await rcon.send('/help');
-	rcon.disconnect();
+  rcon.connect();
+  // safe to immediately setup requests without waiting.
+  await rcon.send('/help');
+  rcon.disconnect();
 }
 
 sendHelp().finally(()=>{
-	const errors = rcon.errors;
-	if(errors.length) console.warn("Errors:",errors);
+  const errors = rcon.errors;
+  if(errors.length) console.warn("Errors:",errors);
 });
 ```
 
@@ -70,11 +70,10 @@ or
 
 ```typescript
 rcon
-	.session(c=> c.send('/help'))
-	.then(
-		result=> console.log(result),
-		error=>console.error(error));
-
+  .session(c=> c.send('/help'))
+  .then(
+    result=> console.log(result),
+    error=>console.error(error));
 ```
 
 ## Factorio
