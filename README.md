@@ -83,6 +83,6 @@ For usage or testing, make sure you are starting the game from command line or c
 
 `factorio.exe --start-server [save-name].zip --rcon-port [port] --rcon-password [password]`
 
-### Verifying It's Working:
+### Verifying it's working:
 
-Try either one of the examples above.
+Try either one of [the examples above](#usage-examples).
