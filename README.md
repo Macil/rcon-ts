@@ -49,7 +49,7 @@ Ends the current socket and subsequently signals to any pending request that the
 rcon.disconnect();
 ````
 
-#### Usage Examples
+### Usage Examples
 
 ```typescript
 async function sendHelp()
