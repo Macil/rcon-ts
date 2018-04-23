@@ -17,6 +17,7 @@ npm install rcon-ts --save
 Creates a new `Rcon` object.
 
 ```typescript
+import Rcon from 'rcon-ts';
 const rcon = new Rcon({
     host: "host-path",
     port: 25575 /*default*/, 
@@ -51,9 +52,6 @@ rcon.disconnect();
 ## Code Example
 
 ```typescript
-import Rcon from 'rcon-ts';
-const rcon = new Rcon('localhost', 'some password');
-
 async function sendHelp()
 {
 	rcon.connect();
@@ -68,21 +66,29 @@ sendHelp();
 or
 
 ```typescript
-import Rcon from 'rcon-ts';
-const rcon = new Rcon('localhost', 'some password');
-
-let result = rcon.session(async c=> {
-    return {
-        part1: await c.send('part1'),
-        part2: await c.send('part2')
-    }
-});
+rcon
+	.session(async c=> {
+		return {
+		part1: await c.send('part1'),
+			part2: await c.send('part2')
+		}
+	})
+	.then(result=>
+		console.log(result));
 ```
 
-## Factorio Setup
+## Factorio
 
-For usage or testing, make sure you are starting the game from command line.
+#### Setup:
 
-#### Example:
+For usage or testing, make sure you are starting the game from command line or connecting to an rcon configured remote instance.
+
 `factorio.exe --start-server [save-name].zip --rcon-port [port] --rcon-password [password]`
 
+#### Verifying It's Working:
+
+```typescript
+rcon
+	.session(c=> c.send('/help')) // As what is possible in the current state.
+	.then(result=> console.log(result));
+```
