@@ -12,7 +12,7 @@ npm install rcon-ts --save
 
 ## API
 
-#### Initialization
+### Initialization
 
 Creates a new `Rcon` object.
 
@@ -26,7 +26,7 @@ const rcon = new Rcon({
 });
 ````
 
-#### Connecting
+### Connecting
 
 Connects with the credentials provided in the constructor.
 Can be awaited on.
@@ -34,14 +34,14 @@ Can be awaited on.
 rcon.connect();
 ```
 
-#### Sending
+### Sending
 
 Executes the provided command on the open connection and returns the response.
 
 ```typescript
 let response = await rcon.send("[rcon request]");
 ````
-#### Disconnecting
+### Disconnecting
 
 Ends the current socket and subsequently signals to any pending request that the connection was disconnected.
 
@@ -49,7 +49,7 @@ Ends the current socket and subsequently signals to any pending request that the
 rcon.disconnect();
 ````
 
-## Code Example
+#### Usage Examples
 
 ```typescript
 async function sendHelp()
@@ -79,13 +79,13 @@ rcon
 
 ## Factorio
 
-#### Setup:
+### Setup:
 
 For usage or testing, make sure you are starting the game from command line or connecting to an rcon configured remote instance.
 
 `factorio.exe --start-server [save-name].zip --rcon-port [port] --rcon-password [password]`
 
-#### Verifying It's Working:
+### Verifying It's Working:
 
 ```typescript
 rcon
