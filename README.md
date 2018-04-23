@@ -56,25 +56,25 @@ async function sendHelp()
 {
 	rcon.connect();
 	// safe to immediately setup requests without waiting.
-	await rcon.send('help');
+	await rcon.send('/help');
 	rcon.disconnect();
 }
 
-sendHelp();
+sendHelp().finally(()=>{
+	const errors = rcon.errors;
+	if(errors.length) console.warn("Errors:",errors);
+});
 ```
 
 or
 
 ```typescript
 rcon
-	.session(async c=> {
-		return {
-		part1: await c.send('part1'),
-			part2: await c.send('part2')
-		}
-	})
-	.then(result=>
-		console.log(result));
+	.session(c=> c.send('/help'))
+	.then(
+		result=> console.log(result),
+		error=>console.error(error));
+
 ```
 
 ## Factorio
@@ -87,8 +87,4 @@ For usage or testing, make sure you are starting the game from command line or c
 
 ### Verifying It's Working:
 
-```typescript
-rcon
-	.session(c=> c.send('/help')) // As what is possible in the current state.
-	.then(result=> console.log(result));
-```
+Try either one of the examples above.
