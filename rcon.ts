@@ -149,7 +149,7 @@ export class Rcon implements RconConfig {
 		return p;
 	}
 
-	async session<T>(context:(rcon?:Rcon,sessionId?:number)=>Promise<T>)
+	async session<T>(context:(rcon?:Rcon,sessionId?:number)=>Promise<T>):Promise<T>
 	{
 		const sessionId = ++this._sessionCount;
 		let rcon:Rcon|undefined;
