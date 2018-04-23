@@ -72,9 +72,7 @@ or
 ```typescript
 rcon
   .session(c => c.send('/help'))
-  .then(
-    result => console.log(result),
-    error => console.error(error));
+  .then(console.log, console.error);
 ```
 
 ## Factorio
