@@ -56,7 +56,7 @@ async function sendHelp()
 {
   rcon.connect();
   // safe to immediately setup requests without waiting.
-  await rcon.send('/help');
+  console.log(await rcon.send('/help'));
   rcon.disconnect();
 }
 
