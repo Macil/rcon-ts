@@ -44,7 +44,7 @@ export interface RconConfig {
 export namespace Defaults
 {
 	export const PORT:number = 25575;
-	export const Timeout:number = 5000;
+	export const TIMEOUT:number = 5000;
 }
 Object.freeze(Defaults);
 
@@ -88,7 +88,7 @@ export class Rcon implements RconConfig {
 			throw new TypeError('"password" argument cannot be empty');
 
 		this.password = password;
-		this.timeout = config.timeout || Defaults.Timeout;
+		this.timeout = config.timeout || Defaults.TIMEOUT;
 	}
 
 	connect(): Promise<Rcon> {
