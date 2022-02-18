@@ -18,8 +18,11 @@
     "!*.test.*"
   ],
   "scripts": {
-    "prepare": "tsc",
+    "prepare": "husky install && tsc",
     "test": "tsc --noEmit"
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
   },
   "repository": "github:Macil/rcon-ts",
   "contributors": [
@@ -29,6 +32,8 @@
   ],
   "license": "MIT",
   "devDependencies": {
+    "husky": "^7.0.4",
+    "lint-staged": "^12.3.4",
     "prettier": "2.5.1",
     "typescript": "^4.5.5"
   },
