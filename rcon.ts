@@ -17,7 +17,7 @@ export class RconError extends ExtendableError {
 	}
 }
 
-export const enum State {
+export enum State {
 	Disconnected = 0,
 	Connecting = 0.5,
 	Connected = 1,
@@ -26,7 +26,7 @@ export const enum State {
 	Unauthorized = -2
 }
 
-const enum PacketType {
+enum PacketType {
 	AUTH = 0x03, // outgoing
 	COMMAND = 0x02, // outgoing
 	RESPONSE_AUTH = 0x02 // incoming
