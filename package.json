@@ -16,7 +16,8 @@
     "!*.test.*"
   ],
   "scripts": {
-    "prepare": "husky install && tsc",
+    "prepare": "husky install",
+    "prepack": "tsc",
     "test": "tsc --noEmit && jest"
   },
   "lint-staged": {
