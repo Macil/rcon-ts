@@ -41,13 +41,10 @@ export interface RconConfig {
 	timeout?: number;
 }
 
-export namespace Defaults
-{
-	export const PORT:number = 25575;
-	export const TIMEOUT:number = 5000;
-}
-Object.freeze(Defaults);
-
+const Defaults = {
+	PORT: 25575,
+	TIMEOUT: 5000,
+};
 
 export class Rcon implements RconConfig {
 
@@ -176,7 +173,7 @@ export class Rcon implements RconConfig {
 		this._connector = undefined;
 	}
 
-	_handleResponse(data: Buffer): void {
+	private _handleResponse(data: Buffer): void {
 		const len = data.readInt32LE(0);
 		if (!len) throw new RconError('Received empty response package');
 
@@ -186,21 +183,25 @@ export class Rcon implements RconConfig {
 		const authId = this._authPacketId;
 
 		if (id === -1 && !isNaN(authId) && type === PacketType.RESPONSE_AUTH) {
-			if (callbacks.has(authId)) {
+			const callback = callbacks.get(authId);
+			if (callback) {
 				id = authId;
 				this._authPacketId = NaN;
-				callbacks.get(authId)!(null, new RconError('Authentication failed.'));
+				callback(null, new RconError('Authentication failed.'));
+				callbacks.delete(id);
 			}
 		}
-		else if (callbacks.has(id)) {
-			let str = data.toString('utf8', 12, len + 2);
-			if (str.charAt(str.length - 1) === '\n')
-				str = str.substring(0, str.length - 1);
+		else {
+			const callback = callbacks.get(authId);
+			if (callback) {
+				let str = data.toString('utf8', 12, len + 2);
+				if (str.charAt(str.length - 1) === '\n')
+					str = str.substring(0, str.length - 1);
 
-			callbacks.get(id)!(str);
+				callback(str);
+				callbacks.delete(id);
+			}
 		}
-
-		callbacks.delete(id); // Possibly superfluous but best to be sure.
 	}
 
 	async send(data: string): Promise<string> {
