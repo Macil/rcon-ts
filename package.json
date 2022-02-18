@@ -11,8 +11,16 @@
     "es2015",
     "es6"
   ],
-  "typings": "rcon.d.ts",
-  "main": "rcon.js",
+  "main": "dist/src/index.js",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "!*.test.*"
+  ],
+  "scripts": {
+    "prepare": "tsc",
+    "test": "tsc --noEmit"
+  },
   "repository": "github:Macil/rcon-ts",
   "contributors": [
     "Levin Ricket <me@levrik.io>",
