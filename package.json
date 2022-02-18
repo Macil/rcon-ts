@@ -1,5 +1,5 @@
 {
-  "name": "rcon-ts",
+  "name": "@macil/rcon-ts",
   "version": "1.2.3",
   "description": "A modern RCON client implementation written in TypeScript (targeting ES2015) and is async/await friendly.",
   "keywords": [
@@ -13,26 +13,21 @@
   ],
   "typings": "rcon.d.ts",
   "main": "rcon.js",
-  "repository": "electricessence/rcon-ts",
+  "repository": "github:Macil/rcon-ts",
   "contributors": [
     "Levin Ricket <me@levrik.io>",
-    "electricessence"
+    "electricessence",
+    "Chris Cowan <agentme49@gmail.com>"
   ],
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^9.6.6",
-    "async-to-gen": "^1.3.0",
-    "mkdirp": "^0.5.1",
-    "mocha": "^3.2.0",
-    "ncp": "^2.0.0",
-    "nugget": "^2.0.1",
-    "rimraf": "^2.5.4",
-    "typescript": "^2.8.3"
+    "typescript": "^4.5.5"
   },
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=14.0.0"
   },
   "dependencies": {
-    "tslib": "^1.9.0"
+    "@types/node": "*",
+    "tslib": "^2.3.1"
   }
 }

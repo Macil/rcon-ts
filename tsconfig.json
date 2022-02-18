@@ -7,9 +7,5 @@
     "sourceMap": true,
     "inlineSources": true,
     "strict": true
-  },
-  "compileOnSave": true,
-  "exclude": [
-    "node_modules"
-  ]
+  }
 }
