@@ -262,5 +262,3 @@ export class Rcon implements RconConfig {
     });
   }
 }
-
-export default Rcon;

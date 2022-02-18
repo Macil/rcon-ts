@@ -1,13 +1,11 @@
-# rcon-ts
+# @macil/rcon-ts
 
-A modern RCON client implementation written in TypeScript (targeting ES2015) and is async/await friendly.
-
-(Originally `node-modern-rcon`.)
+A modern RCON client implementation for Node.js with support for async/await and Typescript.
 
 ## Installation
 
 ```
-npm install rcon-ts --save
+npm install @macil/rcon-ts --save
 ```
 
 ## API
@@ -17,7 +15,7 @@ npm install rcon-ts --save
 Creates a new `Rcon` object.
 
 ```typescript
-import Rcon from 'rcon-ts';
+import { Rcon } from 'rcon-ts';
 const rcon = new Rcon({
   host: 'host-path',
   port: 25575 /*default*/,

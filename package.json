@@ -7,9 +7,7 @@
     "async-await",
     "typescript",
     "minecraft",
-    "factorio",
-    "es2015",
-    "es6"
+    "factorio"
   ],
   "main": "dist/src/index.js",
   "sideEffects": false,
