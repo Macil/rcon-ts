@@ -1,5 +1,6 @@
 import * as net from 'net';
 import { Buffer } from 'buffer';
+import { ClientPacketType, ServerPacketType } from './protocol';
 
 export class ExtendableError extends Error {
   constructor(message: string = '', public readonly innerException?: Error) {
@@ -24,12 +25,6 @@ export enum State {
   Authorized = 2,
   Refused = -1,
   Unauthorized = -2,
-}
-
-enum PacketType {
-  AUTH = 0x03, // outgoing
-  COMMAND = 0x02, // outgoing
-  RESPONSE_AUTH = 0x02, // incoming
 }
 
 type Callback = (data: string | null, error?: Error) => void;
@@ -127,7 +122,7 @@ export class Rcon implements RconConfig {
             if (_.enableConsoleLogging) console.error(_.toString(), error);
           });
 
-          _._send(_.password, PacketType.AUTH)
+          _._send(_.password, ClientPacketType.AUTH)
             .then(() => {
               _._state = State.Authorized;
               if (_.enableConsoleLogging)
@@ -185,7 +180,11 @@ export class Rcon implements RconConfig {
     const callbacks = this._callbacks;
     const authId = this._authPacketId;
 
-    if (id === -1 && !isNaN(authId) && type === PacketType.RESPONSE_AUTH) {
+    if (
+      id === -1 &&
+      !isNaN(authId) &&
+      type === ServerPacketType.RESPONSE_AUTH
+    ) {
       const callback = callbacks.get(authId);
       if (callback) {
         id = authId;
@@ -194,7 +193,7 @@ export class Rcon implements RconConfig {
         callbacks.delete(id);
       }
     } else {
-      const callback = callbacks.get(authId);
+      const callback = callbacks.get(id);
       if (callback) {
         let str = data.toString('utf8', 12, len + 2);
         if (str.charAt(str.length - 1) === '\n')
@@ -211,7 +210,7 @@ export class Rcon implements RconConfig {
       throw new RconError('Instance is not connected.');
 
     await this._connector;
-    return await this._send(data, PacketType.COMMAND);
+    return await this._send(data, ClientPacketType.COMMAND);
   }
 
   private async _send(data: string, cmd: number): Promise<string> {
@@ -221,7 +220,7 @@ export class Rcon implements RconConfig {
 
     const length = Buffer.byteLength(data);
     const id = ++this._lastRequestId;
-    if (cmd === PacketType.AUTH) this._authPacketId = id;
+    if (cmd === ClientPacketType.AUTH) this._authPacketId = id;
 
     const buf = Buffer.allocUnsafe(length + 14);
     buf.writeInt32LE(length + 10, 0);
@@ -237,7 +236,7 @@ export class Rcon implements RconConfig {
         clearTimeout(timeout);
         s.removeListener('end', onEnded);
         this._callbacks.delete(id);
-        if (cmd === PacketType.AUTH) this._authPacketId = NaN;
+        if (cmd === ClientPacketType.AUTH) this._authPacketId = NaN;
       };
 
       const timeout = setTimeout(() => {
