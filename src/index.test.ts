@@ -62,8 +62,8 @@ let abortSignal: AbortSignal;
 }
 
 test('basic', async () => {
-  const connHandler = jest.fn(async (socket) => {
-    expect(connHandler.mock.results.length).toBe(1);
+  const connHandler = jest.fn(async (socket: Socket) => {
+    expect(connHandler.mock.results).toHaveLength(1);
     const it = packetsFromStream(socket);
     try {
       let result = await it.next();
@@ -133,4 +133,47 @@ test('basic', async () => {
 
   rcon.disconnect();
   await Promise.all(connHandler.mock.results.map((r) => r.value));
+});
+
+test('server ends early', async () => {
+  const connHandler = jest.fn(async (socket: Socket) => {
+    expect(connHandler.mock.results).toHaveLength(1);
+    const it = packetsFromStream(socket);
+    try {
+      let result = await it.next();
+      expect(result.done).toBe(false);
+      expect(result.value!.type).toBe(ClientPacketType.AUTH);
+      expect(result.value!.body).toBe('abc');
+      socket.write(
+        createPacketWithLength({
+          id: result.value!.id,
+          type: ServerPacketType.RESPONSE_AUTH,
+          body: '',
+        })
+      );
+    } finally {
+      socket.end();
+      await it.return();
+    }
+  });
+
+  const server = new RconServer(connHandler);
+  await server.listen(abortSignal);
+  const address = server.address();
+
+  const rcon = new Rcon({
+    host: address.address,
+    port: address.port,
+    password: 'abc',
+  });
+  await rcon.connect();
+
+  await Promise.all([
+    ...connHandler.mock.results.map((r) => r.value),
+    (async () => {
+      await expect(rcon.send('hello!')).rejects.toBeTruthy();
+
+      rcon.disconnect();
+    })(),
+  ]);
 });

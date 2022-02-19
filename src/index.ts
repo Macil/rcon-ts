@@ -82,63 +82,66 @@ export class Rcon implements RconConfig {
   }
 
   connect(): Promise<Rcon> {
-    const _ = this;
-    let p = _._connector;
+    let p = this._connector;
     if (!p)
-      _._connector = p = new Promise<Rcon>((resolve, reject) => {
-        _._state = State.Connecting;
-        if (_.enableConsoleLogging)
+      this._connector = p = new Promise<Rcon>((resolve, reject) => {
+        this._state = State.Connecting;
+        if (this.enableConsoleLogging)
           console.log(this.toString(), 'Connecting...');
-        const s = (_._socket = net.createConnection(_.port, _.host));
+        const s = (this._socket = net.createConnection(this.port, this.host));
 
-        function cleanup(message?: string, error?: Error): RconError | void {
-          if (error) _._errors.push(error);
+        const cleanup = (message?: string, error?: Error): RconError | void => {
+          if (error) this._errors.push(error);
           s.removeAllListeners();
-          if (_._socket == s) _._socket = undefined;
-          if (_._connector == p) _._connector = undefined;
+          if (this._socket == s) this._socket = undefined;
+          if (this._connector == p) this._connector = undefined;
           if (message) {
-            if (_.enableConsoleLogging) console.error(_.toString(), message);
+            if (this.enableConsoleLogging)
+              console.error(this.toString(), message);
             if (message) return new RconError(message, error);
           }
-        }
+        };
 
         // Look for connection failure...
         s.once('error', (error) => {
-          _._state = State.Refused;
+          this._state = State.Refused;
           reject(cleanup('Connection refused.', error)); // ** First point of failure.
         });
 
         // Look for successful connection...
         s.once('connect', () => {
           s.removeAllListeners('error');
-          _._state = State.Connected;
-          if (_.enableConsoleLogging)
-            console.log(_.toString(), 'Connected. Authorizing ...');
+          this._state = State.Connected;
+          if (this.enableConsoleLogging)
+            console.log(this.toString(), 'Connected. Authorizing ...');
 
-          s.on('data', (data) => _._handleResponse(data));
+          s.on('data', (data) => this._handleResponse(data));
 
           s.on('error', (error) => {
-            _._errors.push(error);
-            if (_.enableConsoleLogging) console.error(_.toString(), error);
+            this._errors.push(error);
+            if (this.enableConsoleLogging)
+              console.error(this.toString(), error);
           });
 
-          _._send(_.password, ClientPacketType.AUTH)
-            .then(() => {
-              _._state = State.Authorized;
-              if (_.enableConsoleLogging)
-                console.log(_.toString(), 'Authorized.');
-              resolve(_);
-            })
-            .catch((error) => {
-              _._state = State.Unauthorized;
-              reject(cleanup('Authorization failed.', error)); // ** Second point of failure.
-            });
+          resolve(
+            this._send(this.password, ClientPacketType.AUTH)
+              .then(() => {
+                this._state = State.Authorized;
+                if (this.enableConsoleLogging)
+                  console.log(this.toString(), 'Authorized.');
+                return this;
+              })
+              .catch((error) => {
+                this._state = State.Unauthorized;
+                throw cleanup('Authorization failed.', error); // ** Second point of failure.
+              })
+          );
         });
 
         s.once('end', () => {
-          if (_.enableConsoleLogging)
+          if (this.enableConsoleLogging)
             console.warn(this.toString(), 'Disconnected.');
-          _._state = State.Disconnected;
+          this._state = State.Disconnected;
           cleanup();
         });
       });
@@ -229,12 +232,13 @@ export class Rcon implements RconConfig {
     buf.write(data, 12);
     buf.fill(0x00, length + 12);
 
-    await s.write(buf, 'binary');
+    s.write(buf, 'binary');
 
     return await new Promise<string>((resolve, reject) => {
       const cleanup = () => {
         clearTimeout(timeout);
         s.removeListener('end', onEnded);
+        s.removeListener('error', onEnded);
         this._callbacks.delete(id);
         if (cmd === ClientPacketType.AUTH) this._authPacketId = NaN;
       };
@@ -250,6 +254,7 @@ export class Rcon implements RconConfig {
       };
 
       s.once('end', onEnded);
+      s.once('error', onEnded);
 
       this._callbacks.set(id, (data, err) => {
         cleanup();
