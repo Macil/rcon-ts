@@ -62,7 +62,8 @@ let abortSignal: AbortSignal;
 }
 
 test('basic', async () => {
-  const server = new RconServer(async (socket) => {
+  const connHandler = jest.fn(async (socket) => {
+    expect(connHandler.mock.results.length).toBe(1);
     const it = packetsFromStream(socket);
     try {
       let result = await it.next();
@@ -100,12 +101,16 @@ test('basic', async () => {
           body: 'Shutting down!',
         })
       );
+
+      result = await it.next();
+      expect(result.done).toBe(true);
     } finally {
       socket.end();
       await it.return();
     }
   });
 
+  const server = new RconServer(connHandler);
   await server.listen(abortSignal);
   const address = server.address();
 
@@ -125,4 +130,7 @@ test('basic', async () => {
     const response = await rcon.send('bye');
     expect(response).toBe('Shutting down!');
   }
+
+  rcon.disconnect();
+  await Promise.all(connHandler.mock.results.map((r) => r.value));
 });
