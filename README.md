@@ -2,6 +2,8 @@
 
 A modern RCON client implementation for Node.js with support for async/await and Typescript.
 
+This project was a fork of https://github.com/electricessence/rcon-ts. I've discontinued working on it in favor of https://github.com/janispritzkau/rcon-client and https://github.com/ribizli/deno_rcon.
+
 ## Installation
 
 ```
